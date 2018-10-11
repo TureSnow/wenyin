@@ -9,7 +9,6 @@
 		if((int)($_SESSION["privilege"]) > 0)
 		return ;
 
-
 		$conn=mysqli_connect($DBHOST,$DBUSER,$DBPWD,$DBNAME);
 		$sql="select flag_value from flags where flag_name = 'allow_shift';";
 		$re=mysqli_query($conn,$sql);

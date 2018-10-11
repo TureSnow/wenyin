@@ -6,37 +6,8 @@ require_once 'medoo/Medoo.php';
 ?>
 
 <?php 
-if(isset($_SESSION["id"])){
-
-    //取员工信息，并放在一个数组中；
-    $conn = new mysqli($DBHOST, $DBUSER, $DBPWD , $DBNAME);
-    // 检测连接
-    if ($conn->connect_error) {
-        die("连接失败: " . $conn->connect_error);
-        return;
-    } 
-    $sql = "select wno, wname, wprivilege from wstaff;";
-    $result = $conn->query($sql);
-
-    //$staffs 保存员工信息
-    $staffs = array();
-    
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            $staff = array();
-            foreach($row as $key => $value){
-                array_push($staff, $value);
-                #echo $value;
-            }
-            array_push($staffs, $staff);
-            // array_push($staffs, $row);
-            // echo $row['wname'] . "\n";
-            #$staffs=$staffs . 
-        }
-    }
-    
-}else
-echo "<script language=javascript>alert('请先登录！');location.href='/login.php';</script>";
+if(!isset($_SESSION["id"]))
+     echo "<script language=javascript>alert('请登录系统！');location.href='/login.php';</script>";
 ?>
 
 <!DOCTYPE html>
@@ -142,13 +113,26 @@ echo "<script language=javascript>alert('请先登录！');location.href='/login
 
     var Mounted = function(){
        //调用php的员工信息
-      this.staffs = '<?php 
-       $staffs_json = json_encode($staffs);
-       echo ($staffs_json);
-       ?>';
-      this.staffs = eval("("+ this.staffs+")")
-      this.pri = parseInt('<?php echo $_SESSION["privilege"]?>');
-		}
+      $.ajax({
+                    url:'search_info/get_staff_info.php',
+                    type:"post",
+                    dataType:'json',
+                    data :{"get_staff":1}, 
+                    success:function(data){
+                        console.log(data);
+                        this.staffs  = data;
+                        alert("加载成功");
+                    },
+                    error:function(e){
+                        console.log(e);
+                        alert("加载失败");
+                    }
+                });
+    //   console.log(staffs);
+      console.log(this.staffs[0]);
+    //   this.staffs = eval("("+ this.staffs+")")
+    //   this.pri = parseInt('<?php echo $_SESSION["privilege"]?>');
+	}
 
     var Methods= {}
     var Watch= {}

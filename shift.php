@@ -6,7 +6,6 @@ require_once 'medoo/Medoo.php';
 ?>
 
 <?php 
-
 if(isset($_SESSION["id"])){
 	if((int)($_SESSION["privilege"])>2){
 		echo "<script language=javascript>alert('对不起，您没有权限！'); location.href='/index.php';</script>";
@@ -51,11 +50,9 @@ $allow_shift = $data[0];
             <!-- <p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p> -->
           </div> 
 		  <!-- 填班的表格 -->
-		  <!-- 如果复选框搞不定，可以换成下拉表格 -->
+
 		<form id="tf">
 		<table class="table table-hover  table-responsive">
-  		<caption>文印排班表</caption>
-
 			<thead>
 				<tr>
 				<th></th>
@@ -116,6 +113,8 @@ $allow_shift = $data[0];
 		</form>
 		</div><!--/span-->
 
+
+
       </div><!--/span-->
     </div><!--/row-->
 
@@ -123,37 +122,80 @@ $allow_shift = $data[0];
     </div><!--/.fluid-container-->
 
 </body>
-
+ 
 <script>
-		$( document ).ready(function() {
-			var flag= "<?php echo $allow_shift;?>";
-			var wname= "<?php echo $_SESSION['wname'];?>";
-			$("#hello").text("Hello, "+wname);
-			if(flag=="0"){
-				$("#tf").hide();
-				$("#msg").text("暂未开放选班~~");
-			}
-			else{
-				$("#msg").text("请在周六晚10点前完成选班~~");
-			}
-		});
+    var Data= {
+        weeks: 2,
+		week_name:["本部","北区"],
+		shifts_per_day: 4,
+        self_selects:{},
+		all_selects: {},
+    }
+    var Methods= {
+       main_func:function(){
+       },
+       read_shift_info:function(){
+		   /* 得到如下信息:
+		          1. 星期数 + 每星期的名字
+				  2. 每日班数
+		   */
+	   },
+	   display_shift:function(){
+            /*
+			 根据班的信息，显示表格
+			*/
+	   },
+	   click_select: function(shift_id){
+		   this.read_all_shift();
+		   this.display_slefshift();
+		   //检测此班是不是已选
+		   //提交数据库提交一条记录
+		      //根据提交结果反转颜色
+		   
+	   },
+	   display_selfshift:function(){
+            //显示所有班人数基础上，高亮显示已经选的班
+	   },
+       read_all_shift: function(){
+		   //显示所有班的人数
+	   },
+
+    }
+    var vm = new Vue({
+        el: '#app',
+        data: Data,
+        methods: Methods,
+    })
+
+	$( document ).ready(function() {
+		var flag= "<?php echo $allow_shift;?>";
+		var wname= "<?php echo $_SESSION['wname'];?>";
+		$("#hello").text("Hello, "+wname);
+		if(flag=="0"){
+			$("#tf").hide();
+			$("#msg").text("暂未开放选班~~");
+		}
+		else{
+			$("#msg").text("请尽快完成选班~~");
+		}
+	});
 //提交表单文件的函数
-        function upload(){
-            var form = new FormData(document.getElementById("tf"));
-            $.ajax({
-                url:"operation/get_shift.php",
-                type:"post",
-                data:form,
-                processData:false,
-                contentType:false,
-                success:function(data){
-                    console.log("over..");
-					alert("提交成功！");
-                },
-                error:function(e){
-                    alert("提交失败！");
-                }
-            });	
-        }
+	function upload(){
+		var form = new FormData(document.getElementById("tf"));
+		$.ajax({
+			url:"operation/get_shift.php",
+			type:"post",
+			data:form,
+			processData:false,
+			contentType:false,
+			success:function(data){
+				console.log("over..");
+				alert("提交成功！");
+			},
+			error:function(e){
+				alert("提交失败！");
+			}
+		});	
+	}
 </script>
 </html>
