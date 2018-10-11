@@ -18,8 +18,6 @@
             .container-narrow > hr {
             margin: 30px 0;
             }
-
-
             .form-signin {
                 max-width: 300px;
                 padding: 19px 29px 29px;

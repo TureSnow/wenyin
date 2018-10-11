@@ -1,7 +1,7 @@
 <?php
 session_start(); 
 header("Content-type: text/html; charset=utf-8");
-require_once 'format/.conf.ini';
+require_once '../conf.ini';
 require_once 'medoo/Medoo.php';
 ?>
 

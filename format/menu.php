@@ -4,11 +4,9 @@
 					<ul class="nav navbar-nav navbar-left">
 					<li id="main_page" ><a href="/">HOME</a></li>
 					<li id="shift" ><a href="/shift.php" >选班</a></li>
-					<li id="table" ><a href="/table.php">当班表</a></li>
-					<!-- <li id="in_out" ><a href="/in_out.php">收班出班</a></li> -->
 					<li id="arrange" >  <a href="/arrange.php">排班控制台</a></li>
-					<li id="arrange_configure" >  <a href="/arrange_configure.php">定制排班</a></li>
-					<li id="manage" >  <a href="/manage.php">员工信息</a></li>
+					<li id="arrange_configure" > <a href="/arrange_configure.php">定制排班</a></li>
+					<li id="manage" > <a href="/contacts.php">通讯录</a></li>
 					</ul>
 
 					<ul class="nav navbar-nav navbar-right">

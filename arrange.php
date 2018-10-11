@@ -1,14 +1,14 @@
 <?php
 session_start(); 
 header("Content-type: text/html; charset=utf-8");
-require_once 'format/.conf.ini';
+require_once '../conf.ini';
 require_once 'medoo/Medoo.php';
 ?>
 
 <?php 
 if(isset($_SESSION["id"])){
 	if((int)($_SESSION["privilege"])>1){
-		echo "<script language=javascript>alert('对不起，您没有权限！');location.href='./shift.php';</script>";
+		echo "<script language=javascript>alert('只对管理员可见！');location.href='./shift.php';</script>";
 	}
 }else
 echo "<script language=javascript>alert('请先登录！');location.href='/login.php';</script>";

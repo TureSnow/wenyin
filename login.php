@@ -1,7 +1,7 @@
 <?php 
 session_start(); 
 header("Content-type: text/html; charset=utf-8");
-require_once("format/.conf.ini"); //require_once必须需写相对路径，网页跳转可以把网页作为根目录写绝对路径
+require_once '../conf.ini';
 require_once 'medoo/Medoo.php';
 ?>
 

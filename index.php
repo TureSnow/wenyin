@@ -1,7 +1,7 @@
 <?php
 session_start(); 
 header("Content-type: text/html; charset=utf-8");
-require_once 'format/.conf.ini';
+require_once '../conf.ini';
 require_once 'medoo/Medoo.php';
 ?>
 
@@ -51,51 +51,31 @@ require_once 'medoo/Medoo.php';
 		p.setAttribute('class', 'active'); 
 	</script>
 
-<!-- <?php
-	echo date("Y-m-d")."&nbsp;&nbsp;";
-	echo date("l");
-?> -->
-
 <!--    <hr> -->
    <div class="container-narrow">
 		<div class="jumbotron">
-				<h1>欢迎来到光华排班系统</h1>
-				<p class="lead">可定制排班，满足光华人的排班需求</p>
+				<h1>Welcome</h1>
+				
 				<a class="btn btn-large btn-success" href="shift.php">进入排班</a>
 		</div>
 	<hr>
 
 	<div class="row-fluid marketing">
-        <div class="span6">
-          <h3>文印业务简介</h3>
-          <p>打印、复印、卖纸、扫描、期末资料、奖状等</p>
-        
-          <br>
-          <h3>价格明细</h3>
-          <ul>
-            <li>A4(70g)：0.1元/面</li>
-            <li>A4(80g)：单面0.2元、双面0.3元</li>
-            <li>A3(70g)：单面0.4元、双面0.6元</li>
-            <li>彩打(每面)：彩色面积小于1/2、1元；大于1/2、2元 </li>
-            <li>彩纸(红黄蓝绿)：单面0.4元、双面0.5元 </li>
-            <li>扫描/奖状：0.5元/面</li>
-          </ul>
-        </div>
+   <p class="lead">目前当班表</p>
+    <table width="100%" class="table table-striped table-bordered table-hover">
+      <tr style="height: 50px;">
+        <th>当班表</th>
+        <th>星期一</th>
+        <th>星期二</th>
+        <th>星期三</th>
+        <th>星期四</th>
+        <th>星期五</th>
+        <th>星期六</th>
+        <th>星期日</th>
+      </tr>
+    <?php require_once 'operation/result_table.php'; ?>
+    </table>
 
-        <div class="span6">
-          <h3>顾客投诉</h3>
-          <p>向我们反馈</p>
-          <br>
-          <h3>资料种类</h3>
-          <ul>
-            <li>《我是马基》</li>
-            <li>《我是毛概》</li>
-            <li>《我是军理》</li>
-            <li>《我是高数》(ABC)</li>
-            <li>《我是数分》</li>
-            <li>《我是大物》</li>
-          </ul>
-        </div>
 	</div>
   <hr>
 	  
