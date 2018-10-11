@@ -104,36 +104,35 @@ if(!isset($_SESSION["id"]))
 </script>
 
 <script type="text/javascript">
+    //加载得到所有staff的信息
+    var infos = (function(){
+        var result;
+        $.ajax({
+                url:'search_info.php',
+                type:"post",
+                dataType:'json',
+                data:{"get_staff":1}, 
+                async: false,
+                success:function(data){
+                    result = data;
+                    alert("加载成功");
+                },
+                error:function(e){
+                    console.log(e);
+                    alert("加载失败");
+                }
+                });
+            return result;
+    })();
 
     var Data= {
-        staffs:[],
+        staffs:infos,
         pri: 1,
         stars: "********",
     }
-
     var Mounted = function(){
-       //调用php的员工信息
-      $.ajax({
-                    url:'search_info/get_staff_info.php',
-                    type:"post",
-                    dataType:'json',
-                    data :{"get_staff":1}, 
-                    success:function(data){
-                        console.log(data);
-                        this.staffs  = data;
-                        alert("加载成功");
-                    },
-                    error:function(e){
-                        console.log(e);
-                        alert("加载失败");
-                    }
-                });
-    //   console.log(staffs);
-      console.log(this.staffs[0]);
-    //   this.staffs = eval("("+ this.staffs+")")
-    //   this.pri = parseInt('<?php echo $_SESSION["privilege"]?>');
+        this.pri = parseInt('<?php echo $_SESSION["privilege"]?>');
 	}
-
     var Methods= {}
     var Watch= {}
     var vm = new Vue({

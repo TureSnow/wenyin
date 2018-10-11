@@ -31,7 +31,7 @@ $allow_shift = $data[0];
 <head>
 	<title>选班排班系统</title>
 	<?php include 'format/head.php'; ?>
-
+	<script src="https://cdn.bootcss.com/vue/2.2.2/vue.min.js"></script>
 </head>
 <body>
 	<?php include 'format/menu.php'; ?>
@@ -43,7 +43,7 @@ $allow_shift = $data[0];
     <div class="container-fluid">
       <div class="row-fluid">
 
-        <div class="span9">
+        <div class="span9" id="app">
           <div class="hero-unit">
             <h1 id="hello">Hello, world!</h1>
             <p id="msg">请在13月25点之前完成填班工作</p>
@@ -51,69 +51,31 @@ $allow_shift = $data[0];
           </div> 
 		  <!-- 填班的表格 -->
 
-		<form id="tf">
-		<table class="table table-hover  table-responsive">
+		<table id="tf" v-for="weekid in weeks"  class="table table-bordered">
 			<thead>
 				<tr>
-				<th></th>
-				<th>周一</th>
-				<th>周二</th>
-				<th>周三</th>
-				<th>周四</th>
-				<th>周五</th>
-				<th>周六</th>
-				<th>周日</th>
+				    <th>{{week_name[weekid-1]}}</th>
+					<th v-for="day in 7"> 周{{day}} </th>
 				</tr>
 			</thead>
-			<tbody>
-				<tr>
-					<td>第一班</td>
-					<td><input type="checkbox" name="shift1" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift5" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift9" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift13" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift17" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift21" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift25" value="1" style="zoom:180%;"/> </td>
-				</tr>
-				<tr>
-					<td>第二班</td>
-					<td><input type="checkbox" name="shift2" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift6" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift10" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift14" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift18" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift22" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift26" value="1" style="zoom:180%;"/> </td>
-				</tr>
-				<tr>
-					<td>第三班</td>
-					<td><input type="checkbox" name="shift3" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift7" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift11" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift15" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift19" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift23" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift27" value="1" style="zoom:180%;"/> </td>
-				</tr>
-				<tr>
-					<td>第四班</td>
-					<td><input type="checkbox" name="shift4" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift8" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift12" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift16" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift20" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift24" value="1" style="zoom:180%;"/> </td>
-					<td><input type="checkbox" name="shift28" value="1" style="zoom:180%;"/> </td>
+			<tbody v-for="i in shifts_per_day">
+				<tr >
+					<td>第{{i}}班</td>
+					<td v-for="j in 7" style="background-color: gray">
+					<div class="p-3 mb-2 bg-light text-dark"  @click="click_select(j + (i-1)*7 + (weekid-1)*shifts_per_day*7)">
+
+						<div v-if="all_selects[j + (i-1)*7 + (weekid-1)*shifts_per_day*7]">
+							<div id="{{j + (i-1)*7 + (weekid-1)*shifts_per_day*7}}" style="background-color: yellow" v-if="self_selects[j + (i-1)*7 + (weekid-1)*shifts_per_day*7]"  >{{all_selects[j + (i-1)*7 + (weekid-1)*shifts_per_day*7]}}</div>
+							<div v-else style="background-color: green">{{all_selects[j + (i-1)*7 + (weekid-1)*shifts_per_day*7]}}</div>
+						</div>
+						<div v-else>0</div>
+					</td>
+					</div>
 				</tr>
 			</tbody>
 		</table>
-		<input type="button" value="提交" onclick="upload();"/> &nbsp &nbsp
-		<button type="reset">重置</button>
-		</form>
+
 		</div><!--/span-->
-
-
 
       </div><!--/span-->
     </div><!--/row-->
@@ -124,47 +86,163 @@ $allow_shift = $data[0];
 </body>
  
 <script>
+    var search_url = "search_info.php";
+	var select_shifts = (function(){
+		var result;
+		$.ajax({
+				url:search_url,
+				type:"post",
+				dataType:'json',
+				data:{"if_select_shift":1},
+				async: false,
+				success:function(data){
+					result = data;
+				},
+				error:function(e){
+					console.log(e);
+					alert("加载失败");
+				}
+				});
+			return result;
+	})();
+    console.log(select_shifts);//已经可以获取数据了
+
+	var select_nums = (function(){
+		var result;
+		$.ajax({
+				url:search_url,
+				type:"post",
+				dataType:'json',
+				data:{"shifts_select_num":1},
+				async: false,
+				success:function(data){
+					result = data;
+				},
+				error:function(e){
+					console.log(e);
+					alert("加载失败");
+				}
+				});
+			return result;
+	})();
+    console.log(select_nums);//已经可以获取数据了
+
+	var custom_info = (function(){
+		var result;
+		$.ajax({
+				url:search_url,
+				type:"post",
+				dataType:'json',
+				data:{"custom_info":1},
+				async: false,
+				success:function(data){
+					result = data;
+				},
+				error:function(e){
+					console.log(e);
+					alert("加载失败");
+				}
+				});
+			return result;
+	})();
+    console.log(custom_info);//已经可以获取数据了
+	
+	var no2name = (function(){
+		var result;
+		$.ajax({
+				url:search_url,
+				type:"post",
+				dataType:'json',
+				data:{"no2name":1},
+				async: false,
+				success:function(data){
+					result = data;
+				},
+				error:function(e){
+					console.log(e);
+					alert("加载失败");
+				}
+				});
+			return result;
+	})();
+    console.log(no2name);//已经可以获取数据了
+
+	var weeksname =(function(){
+		var result;
+		$.ajax({
+				url:search_url,
+				type:"post",
+				dataType:'json',
+				data:{"weeksname":1},
+				async: false,
+				success:function(data){
+					result = data;
+				},
+				error:function(e){
+					console.log(e);
+					alert("加载失败");
+				}
+				});
+			return result;
+	})();
+    console.log(weeksname);//已经可以获取数据了
+</script>
+
+<script>
     var Data= {
-        weeks: 2,
-		week_name:["本部","北区"],
-		shifts_per_day: 4,
-        self_selects:{},
-		all_selects: {},
+        weeks:parseInt( custom_info[0]),
+		week_name: weeksname,
+		shifts_per_day: parseInt( custom_info[1]),
+        self_selects: select_shifts,
+		all_selects:  select_nums,
     }
     var Methods= {
-       main_func:function(){
-       },
-       read_shift_info:function(){
-		   /* 得到如下信息:
-		          1. 星期数 + 每星期的名字
-				  2. 每日班数
-		   */
-	   },
-	   display_shift:function(){
-            /*
-			 根据班的信息，显示表格
-			*/
-	   },
 	   click_select: function(shift_id){
-		   this.read_all_shift();
-		   this.display_slefshift();
-		   //检测此班是不是已选
-		   //提交数据库提交一条记录
-		      //根据提交结果反转颜色
-		   
+		   //先更新数据
+		   //再检查颜色
+		   var flag=1;
+		   if(this.self_selects[shift_id]=='1')
+               flag=0;
+		   console.log('#'+shift_id);
+
+		   var block = '#'+shift_id;
+
+           if(flag) //id颜色变亮
+			 $(block).css("background-color","yellow");
+		   else //id颜色变暗
+		     $(block).css("background-color","green");
+
+		    //flag =1, 插入
+             
+		   	$.ajax({
+				url:"operation/click_select.php",
+				type:"post",
+				data:{"shift_id":shift_id, "flag":flag},
+				async: false,
+				success:function(data){
+					console.log("over..");
+					alert("提交成功！");
+					alert(data);
+				},
+				error:function(e){
+					alert("提交失败！");
+				}
+		    });	
 	   },
 	   display_selfshift:function(){
             //显示所有班人数基础上，高亮显示已经选的班
+			
 	   },
-       read_all_shift: function(){
-		   //显示所有班的人数
-	   },
-
     }
+	var Mount =function(){
+       this.display_selfshift();
+	}
+
     var vm = new Vue({
         el: '#app',
         data: Data,
         methods: Methods,
+		mount:Mount,
     })
 
 	$( document ).ready(function() {
@@ -179,23 +257,6 @@ $allow_shift = $data[0];
 			$("#msg").text("请尽快完成选班~~");
 		}
 	});
-//提交表单文件的函数
-	function upload(){
-		var form = new FormData(document.getElementById("tf"));
-		$.ajax({
-			url:"operation/get_shift.php",
-			type:"post",
-			data:form,
-			processData:false,
-			contentType:false,
-			success:function(data){
-				console.log("over..");
-				alert("提交成功！");
-			},
-			error:function(e){
-				alert("提交失败！");
-			}
-		});	
-	}
+
 </script>
 </html>

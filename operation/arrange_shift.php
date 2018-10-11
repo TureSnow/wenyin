@@ -43,8 +43,50 @@
 		}
     }
 
-    // 将选班信息写入到文件中
-    // 稍后需要讲班次信息写入到文件中
+     // 稍后需要将班次信息写入到文件中
+    //读班次信息
+    $database = new Medoo([
+        'database_type' => 'mysql',
+        'database_name' => $DBNAME,
+        'server' =>  $DBHOST,
+        'username' => $DBUSER,
+        'password' => $DBPWD,
+    ]);
+    $custom = $database->select("custom", ["weeks","shift_per_day"]);
+   
+    $weeks = $custom[0]["weeks"];
+    $shift_per_day = $custom[0]["shift_per_day"];
+
+    $shift_info = $database->select("shift", ["sno","snum","stime"]);
+    $shift_time = array();
+    $shift_num = array();
+
+    foreach($shift_info as $v){
+        $shift_time[$v["sno"]] = $v["stime"];
+        $shift_num[$v["sno"]]  =  $v["snum"];
+    }
+
+    $file=fopen("../../info2.txt","w") or exit("Unable to open file!");
+    fwrite($file, "time_nums: ");
+    $time_nums = $weeks * 7* $shift_per_day;
+    fwrite($file, $time_nums."\n");
+
+    fwrite($file, "duration\n");
+    foreach ($shift_time as $key=>&$value){
+        fwrite($file, $key." ");
+        fwrite($file, $value);
+        fwrite($file, "\n");
+    }
+    fwrite($file, "nums\n");
+
+    foreach ($shift_num as $key=>&$value){
+        fwrite($file, $key." ");
+        fwrite($file, $value);
+        fwrite($file, "\n");
+    }
+    fclose($file);
+   
+    // 选班信息写入到文件中
     $file=fopen("../../info.txt","w") or exit("Unable to open file!");
     foreach ($select_map as $key=>&$value){
         fwrite($file,$key." ");
@@ -62,13 +104,6 @@
     echo $result;
 
     
-    $database = new Medoo([
-        'database_type' => 'mysql',
-        'database_name' => $DBNAME,
-        'server' =>  $DBHOST,
-        'username' => $DBUSER,
-        'password' => $DBPWD,
-    ]);
     sleep(1);//暂停0.3秒
     //sleep(1);
 
