@@ -3,6 +3,14 @@ session_start();
 header("Content-type: text/html; charset=utf-8");
 require_once '../conf.ini';
 require_once 'medoo/Medoo.php';
+
+if(isset($_SESSION["id"])){
+	if((int)($_SESSION["privilege"])>2){
+		echo "<script language=javascript>alert('对不起，您没有权限！'); location.href='/index.php';</script>";
+	}
+}else
+echo "<script language=javascript>alert('请先登录！');location.href='/login.php';</script>";
+
 ?>
 
 <!DOCTYPE html>
@@ -102,13 +110,12 @@ require_once 'medoo/Medoo.php';
 					result = data;
 				},
 				error:function(e){
-					console.log(e);
+					
 					alert("加载失败");
 				}
 				});
 			return result;
 	})();
-    console.log(select_shifts);//已经可以获取数据了
 
 	var select_nums = (function(){
 		var result;
@@ -122,13 +129,11 @@ require_once 'medoo/Medoo.php';
 					result = data;
 				},
 				error:function(e){
-					console.log(e);
 					alert("加载失败");
 				}
 				});
 			return result;
 	})();
-    console.log(select_nums);//已经可以获取数据了
 
 	var custom_info = (function(){
 		var result;
@@ -142,13 +147,12 @@ require_once 'medoo/Medoo.php';
 					result = data;
 				},
 				error:function(e){
-					console.log(e);
 					alert("加载失败");
 				}
 				});
 			return result;
 	})();
-    console.log(custom_info);//已经可以获取数据了
+  
     var no2name = (function(){
 		var result;
 		$.ajax({
@@ -161,13 +165,12 @@ require_once 'medoo/Medoo.php';
 					result = data;
 				},
 				error:function(e){
-					console.log(e);
 					alert("加载失败");
 				}
 				});
 			return result;
 	})();
-    console.log(no2name);//已经可以获取数据了
+ 
 
 	var weeksname =(function(){
 		var result;
@@ -181,13 +184,13 @@ require_once 'medoo/Medoo.php';
 					result = data;
 				},
 				error:function(e){
-					console.log(e);
+					
 					alert("加载失败");
 				}
 				});
 			return result;
 	})();
-    console.log(weeksname);//已经可以获取数据了
+ 
    //数据加载
     var staffs_who_selects = (function(){
 		var result;
@@ -201,13 +204,11 @@ require_once 'medoo/Medoo.php';
 					result = data;
 				},
 				error:function(e){
-					console.log(e);
 					alert("加载失败");
 				}
 				});
 			return result;
 	})();
-    console.log(staffs_who_selects);//已经可以获取数据了
      
     var staffs_who_arranged = (function(){
         var result;
@@ -221,13 +222,11 @@ require_once 'medoo/Medoo.php';
                     result = data;
                 },
                 error:function(e){
-                    console.log(e);
                     alert("加载失败");
                 }
                 });
             return result;
     })();
-    console.log(staffs_who_arranged);//已经可以获取数据了
 </script>
 <script>
     //vue部分

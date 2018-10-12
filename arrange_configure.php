@@ -155,7 +155,7 @@ for(i=0; i<Total_shifts; i++)
 					alert("修改成功");
 				},
 				error:function(e){
-					alert("加载失败");
+					alert("修改失败");
 				}
 			});
 		},

@@ -107,7 +107,7 @@ require_once 'medoo/Medoo.php';
             $_SESSION["password"]= $password;
             $_SESSION["privilege"]= $pass[0]["wprivilege"];
             $_SESSION["wname"]= $pass[0]["wname"];
-            echo "<script language=javascript>alert('登录成功！');location.href='../index.php';</script>";
+            echo "<script language=javascript>location.href='../index.php';</script>";
         }else{
             echo "<script language=javascript>alert('账号或密码错误！');</script>" ;
         }

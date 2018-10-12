@@ -51,16 +51,19 @@ $database = new Medoo([
 
     for($i=0; $i<$weeks; $i++){
         $tem = array($weeksname[($i+1).""],'周一','周二','周三','周四','周五','周六','周日');
-        for($j=$i*$shift_per_day*7; $j <($i+1)*$shift_per_day*7; $j++){
+        for($j=$i*$shift_per_day*7; $j <($i+1)*$shift_per_day*7+1; $j++){
             if($j%7==0){
                 fputcsv($file,$tem);
                 $tem = array("第".(($j-$i*$shift_per_day*7)/7+1)."班");
+
             }
+
             $a="";
-            foreach($arranged[$j] as $x)
+            foreach($arranged[$j+1] as $x)
                if($x!="")
                   $a = $a.$dics[$x]."\n";
             array_push($tem, $a);
+
         }
         fputcsv($file,$tem);
 

@@ -131,7 +131,6 @@ echo "<script language=javascript>alert('请先登录！');location.href='/login
 					result = data;
 				},
 				error:function(e){
-				
 					alert("加载失败");
 				}
 				});
@@ -284,6 +283,7 @@ echo "<script language=javascript>alert('请先登录！');location.href='/login
                 success:function(data){
                     console.log("over..");
                     alert("排班成功！");
+                    location.reload();
                 },
                 error:function(e){
                     alert("排班失败！");
