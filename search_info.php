@@ -32,6 +32,21 @@
         echo json_encode($selects);
         return;
     }
+
+    //每个人当班的时间-->字典
+    if(isset($_POST['working_time'])){
+            $results1 = $database->select("arrange_shift", ["wno","sno"]);
+            $selects = array();
+            
+            foreach ($results as $v) {
+                if(!isset( $selects[$v["sno"]]))
+                    $selects[$v["sno"]] =  array();
+                    
+                array_push($selects[$v["sno"]], $v['wno']);
+            }
+            echo json_encode($selects);
+            return;
+        }
     
     //所有排班的人-->字典
     if(isset($_POST['staffs_who_arranged'])){

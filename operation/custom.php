@@ -1,10 +1,4 @@
 <?php
-/* 
-   1.接收weeks, shfts_per_day, weeks_name, 所有班的时间，人数信息
-   2.将week，shfts_per_day插入表custom
-   3.将weeksname插入
-   4.将所有班的信息插入
-*/
 session_start();
 header("Content-type: text/html; charset=utf-8");
 require_once("../../conf.ini");
@@ -12,6 +6,9 @@ require_once '../medoo/Medoo.php';
 use Medoo\Medoo;
 
 if(!isset($_SESSION["id"])) return;
+if((int)($_SESSION["privilege"])>0)
+return ;
+
 $database = new Medoo([
     'database_type' => 'mysql',
     'database_name' => $DBNAME,
@@ -20,27 +17,46 @@ $database = new Medoo([
     'password' => $DBPWD,
 ]);
 
-echo "lalala";
-//删除上次提交的选班数据，插入新选班数据
 if(isset($_POST)){
-    echo $POST["duration_of_shift"][0];
-     
-    // $database->delete("select_shift", [
-    //         "wno" => $_SESSION["id"]
-    // ]);
+   $weeks = $_POST["weeks"];
+   $shifts_per_day = $_POST["shifts_per_day"];
 
-    // $shifts=array();
-    // for($i=1; $i<=28; $i++){
-    //     $str="shift";
-    //     $str=$str.(string)$i;
-    //     if(isset($_POST[$str])){
-    //             $database->insert('select_shift', [
-    //                 'wno' => $_SESSION["id"],
-    //                 'sno' => $i ,
-    //             ]);
-    //     }
-    // }
-}
+   $database -> update("custom", [
+	"weeks" => $weeks,
+	"shifts_per_day" =>$shifts_per_day,
+   ]);
+
+   $database -> delete("weekinfo",[]);
+   $database -> delete("select_shift",[]);
+   $database -> delete("arrange_shift",[]);
+   $database -> delete("shift",[]);
+
+   $total_shifts = $weeks * $shifts_per_day *7;
+
+   $weeksname = array();
+   for($i=1; $i<=$weeks; $i++)
+        $weeksname[$i] = $_POST["week".$i];
+
+   $duration = array();
+   for($i=1; $i<=$shifts_per_day; $i++)
+        $duration[$i] = $_POST["time".$i];
+
+   $shift_nums = array();
+   for($i=1; $i<=$total_shifts; $i++)
+        $shift_nums[$i] = $_POST[$i.""];
+
+    for($i=1; $i<=$weeks; $i++)
+        $database->insert('weekinfo', [
+            'weekno' => $i,
+            'weekname' =>  $weeksname[$i]
+        ]);
    
-
+    for($i=1; $i<=$total_shifts; $i++){
+        $database->insert('shift', [
+            'sno' => $i,
+            'snum' => $shift_nums[$i],
+            'stime' => $duration[(($i-1)%($shifts_per_day * 7))/7+1],
+        ]);
+    }
+}
 ?>

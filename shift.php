@@ -32,6 +32,13 @@ $allow_shift = $data[0];
 	<title>选班排班系统</title>
 	<?php include 'format/head.php'; ?>
 	<script src="https://cdn.bootcss.com/vue/2.2.2/vue.min.js"></script>
+	<style>
+		.itemDiv {
+			margin-top:0px;
+			margin: 0px auto;
+		}
+	</style>
+
 </head>
 <body>
 	<?php include 'format/menu.php'; ?>
@@ -43,37 +50,39 @@ $allow_shift = $data[0];
     <div class="container-fluid">
       <div class="row-fluid">
 
-        <div class="span9" id="app">
-          <div class="hero-unit">
+        <div class="span9" id="app"  >
+          <div class="hero-unit" >
             <h1 id="hello">Hello, world!</h1>
             <p id="msg">请在13月25点之前完成填班工作</p>
             <!-- <p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p> -->
           </div> 
 		  <!-- 填班的表格 -->
-
-		<table id="tf" v-for="weekid in weeks"  class="table table-bordered">
+        
+		<div id="tf">
+		<table  v-for="weekid in weeks"  class="table table-bordered">
 			<thead>
 				<tr>
-				    <th>{{week_name[weekid-1]}}</th>
+				    <th>{{week_name[weekid]}}</th>
 					<th v-for="day in 7"> 周{{day}} </th>
 				</tr>
 			</thead>
 			<tbody v-for="i in shifts_per_day">
 				<tr >
 					<td>第{{i}}班</td>
-					<td v-for="j in 7" style="background-color: gray">
-					<div class="p-3 mb-2 bg-light text-dark"  @click="click_select(j + (i-1)*7 + (weekid-1)*shifts_per_day*7)">
-
+					<td v-for="j in 7" style="background-color: #ECF0F1" id="{{j + (i-1)*7 + (weekid-1)*shifts_per_day*7}}">
+					<div  @click="click_select(j + (i-1)*7 + (weekid-1)*shifts_per_day*7)">
 						<div v-if="all_selects[j + (i-1)*7 + (weekid-1)*shifts_per_day*7]">
-							<div id="{{j + (i-1)*7 + (weekid-1)*shifts_per_day*7}}" style="background-color: yellow" v-if="self_selects[j + (i-1)*7 + (weekid-1)*shifts_per_day*7]"  >{{all_selects[j + (i-1)*7 + (weekid-1)*shifts_per_day*7]}}</div>
-							<div v-else style="background-color: green">{{all_selects[j + (i-1)*7 + (weekid-1)*shifts_per_day*7]}}</div>
+							<div  style="background-color: #3498DB" v-if="self_selects[j + (i-1)*7 + (weekid-1)*shifts_per_day*7]"  >{{all_selects[j + (i-1)*7 + (weekid-1)*shifts_per_day*7]}}</div>
+							<div v-else >{{all_selects[j + (i-1)*7 + (weekid-1)*shifts_per_day*7]}}</div>
+							<!-- {{all_selects[j + (i-1)*7 + (weekid-1)*shifts_per_day*7]}} -->
 						</div>
 						<div v-else>0</div>
-					</td>
 					</div>
+					</td>
 				</tr>
 			</tbody>
 		</table>
+		</div>
 
 		</div><!--/span-->
 
@@ -99,13 +108,12 @@ $allow_shift = $data[0];
 					result = data;
 				},
 				error:function(e){
-					console.log(e);
 					alert("加载失败");
 				}
 				});
 			return result;
 	})();
-    console.log(select_shifts);//已经可以获取数据了
+
 
 	var select_nums = (function(){
 		var result;
@@ -119,13 +127,11 @@ $allow_shift = $data[0];
 					result = data;
 				},
 				error:function(e){
-					console.log(e);
 					alert("加载失败");
 				}
 				});
 			return result;
 	})();
-    console.log(select_nums);//已经可以获取数据了
 
 	var custom_info = (function(){
 		var result;
@@ -139,33 +145,11 @@ $allow_shift = $data[0];
 					result = data;
 				},
 				error:function(e){
-					console.log(e);
 					alert("加载失败");
 				}
 				});
 			return result;
 	})();
-    console.log(custom_info);//已经可以获取数据了
-	
-	var no2name = (function(){
-		var result;
-		$.ajax({
-				url:search_url,
-				type:"post",
-				dataType:'json',
-				data:{"no2name":1},
-				async: false,
-				success:function(data){
-					result = data;
-				},
-				error:function(e){
-					console.log(e);
-					alert("加载失败");
-				}
-				});
-			return result;
-	})();
-    console.log(no2name);//已经可以获取数据了
 
 	var weeksname =(function(){
 		var result;
@@ -179,13 +163,11 @@ $allow_shift = $data[0];
 					result = data;
 				},
 				error:function(e){
-					console.log(e);
 					alert("加载失败");
 				}
 				});
 			return result;
 	})();
-    console.log(weeksname);//已经可以获取数据了
 </script>
 
 <script>
@@ -203,14 +185,12 @@ $allow_shift = $data[0];
 		   var flag=1;
 		   if(this.self_selects[shift_id]=='1')
                flag=0;
-		   console.log('#'+shift_id);
 
-		   var block = '#'+shift_id;
-
-           if(flag) //id颜色变亮
-			 $(block).css("background-color","yellow");
-		   else //id颜色变暗
-		     $(block).css("background-color","green");
+		//    var block = '#'+shift_id;
+        //    if(flag) //id颜色变亮
+		// 	 $(block).css("background-color","yellow");
+		//    else //id颜色变暗
+		//      $(block).css("background-color","green");
 
 		    //flag =1, 插入
              
@@ -221,8 +201,8 @@ $allow_shift = $data[0];
 				async: false,
 				success:function(data){
 					console.log("over..");
-					alert("提交成功！");
-					alert(data);
+					// alert("提交成功！");
+					location.reload();
 				},
 				error:function(e){
 					alert("提交失败！");
@@ -230,12 +210,16 @@ $allow_shift = $data[0];
 		    });	
 	   },
 	   display_selfshift:function(){
-            //显示所有班人数基础上，高亮显示已经选的班
-			
+           //显示所有班人数基础上，高亮显示已经选的班
+		   for (var x in this.self_selects) {
+			  $('#'+x).css("background-color","#3498DB");
+			}
 	   },
     }
 	var Mount =function(){
-       this.display_selfshift();
+		for (var x in this.self_selects) {
+			  $("#"+x).css("background-color","#3498DB");
+			}
 	}
 
     var vm = new Vue({
@@ -254,7 +238,7 @@ $allow_shift = $data[0];
 			$("#msg").text("暂未开放选班~~");
 		}
 		else{
-			$("#msg").text("请尽快完成选班~~");
+			$("#msg").text("点击灰色选班~");
 		}
 	});
 

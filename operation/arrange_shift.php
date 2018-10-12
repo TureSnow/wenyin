@@ -2,7 +2,6 @@
     /*
     具体执行排班代码的php
     */
-
     session_start();
     header("Content-type: text/html; charset=utf-8");
     require_once("../../conf.ini");

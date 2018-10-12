@@ -4,7 +4,6 @@
 	require_once("../../conf.ini");
 
 	if(isset($_SESSION["id"])){  //使用session作为保护
-
 		//只有管理员可做此操作，权限为1可以看到，但无法操作
 		if((int)($_SESSION["privilege"]) > 0)
 		return ;
@@ -20,6 +19,9 @@
 
 		//删掉之前选班结果，否则之前的值会影响
 		$delete_table = "truncate table select_shift;";
+		$re=mysqli_query($conn,$delete_table);
+		//删掉之前选班结果，否则之前的值会影响
+		$delete_table = "truncate table arrange_shift;";
 		$re=mysqli_query($conn,$delete_table);
 	}
 

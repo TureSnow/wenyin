@@ -6,8 +6,12 @@ require_once 'medoo/Medoo.php';
 ?>
 
 <?php 
-if(!isset($_SESSION["id"]))
-     echo "<script language=javascript>alert('请登录系统！');location.href='/login.php';</script>";
+if(isset($_SESSION["id"])){
+	if((int)($_SESSION["privilege"])>1){
+		echo "<script language=javascript>alert('只对管理员可见！');location.href='./shift.php';</script>";
+	}
+}else
+echo "<script language=javascript>alert('请先登录！');location.href='/login.php';</script>";
 ?>
 
 <!DOCTYPE html>
@@ -33,10 +37,10 @@ if(!isset($_SESSION["id"]))
     <div class="container-fluid">
       <div class="row-fluid">
       <hr>
-<!--    上传通讯录操作     <input class="input-block-level" type="file" id="file-upload" name="file"/>
+      <input class="input-block-level" type="file" id="file-upload" name="file"/>
         <br>
         <button class="btn btn-large btn-primary" onclick="onload_staff()">导入通讯录</button>
-        <hr> -->
+        <hr>
         <button class="btn btn-large btn-primary" onclick="show_staff()">添加新员工</button>
         <button class="btn btn-large btn-primary" onclick="show_staff()" id="show_staffs" >显示员工信息</button>
         <button class="btn btn-large btn-primary" onclick="show_staff()" id="confirm" >确认设置</button>
@@ -115,7 +119,6 @@ if(!isset($_SESSION["id"]))
                 async: false,
                 success:function(data){
                     result = data;
-                    alert("加载成功");
                 },
                 error:function(e){
                     console.log(e);

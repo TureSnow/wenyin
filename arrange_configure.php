@@ -34,40 +34,38 @@ echo "<script language=javascript>alert('请先登录！');location.href='/login
 <div id="app">
 		<hr>
         <b>排班周数: </b>
-		<input v-model="weeks"  />
+		<input v-model="weeks" id="ipp1" />
         <b>每日班数: </b>
-		<input v-model="shifts_per_day"  />
+		<input v-model="shifts_per_day" id="ipp2"/>
 		<br>
 		<br>
 		<b>每班时长(小时): </b>
 		<table class="table-responsive">
-			<tbody v-for="i in shifts_per_day ">
-				<tr><td>第{{i}}班: <input  type="number" name="points" min="1" max="100" style="width:30px" v-model="duration_of_shift[i-1]"/></td><tr>
+			<tbody>
+				<tr id="id1" v-for="i in shifts_per_day " >
+					<td>第{{i}}班: <input  type="number" name="points" min="1" max="100" style="width:30px" v-model="duration_of_shift[i-1]"/></td>
+				<tr>
 			</tbody>
 		</table>
 		<hr>
-
-
 		<!-- <b>排班模式：</b>    
 		<select v-model="privilege_model">
 		<option value =1>平行模式</option>
 	    </select>
 		<hr> -->
-       
-	   <ul v-for="wid in weeks" >
-	   名称:<input v-model = "weeks_name[wid-1]"/>
-	   <li class="row-fluid">
+	   <ul v-for="wid in weeks">
+	   <li  class="row-fluid">
 			<table class="table-responsive">
 				<thead>
 					<tr>
-					<td></td>
+					<td><input v-model = "weeks_name[wid-1]"/></td>
 					<td v-for="day in 7"> {{day}} </td>
 					</tr>
 				</thead>
 				<tbody v-for="i in shifts_per_day">
 					<tr >
 						<td>第{{i}}班:</td>
-						<td v-for="j in 7"><input type="number" name="points" min="1" max="100" style="width:30px"  v-model="staffs_of_shift[ j-1 + (i-1)*7 + (wid-1)*shifts_per_day*7]"/></td>
+						<td v-for="j in 7"><input type="number" name="points" min="1" max="100" style="width:30px"  v-model="staffs_of_shift[j-1 + (i-1)*7 + (wid-1)*shifts_per_day*7]"/></td>
 					</tr>
 				</tbody>
 			</table>
@@ -82,67 +80,101 @@ echo "<script language=javascript>alert('请先登录！');location.href='/login
     </div><!--/.fluid-container-->
 
 </body>
+<script>
+var search_url = "search_info.php";
+var custom_info = (function(){
+	var result;
+	$.ajax({
+			url:search_url,
+			type:"post",
+			dataType:'json',
+			data:{"custom_info":1},
+			async: false,
+			success:function(data){
+				result = data;
+			},
+			error:function(e){
+				alert("加载失败");
+			}
+			});
+		return result;
+})();
+
+var Weeks = parseInt(custom_info[0]);
+var Shifts_per_day =parseInt(custom_info[1]);
+
+var Total_shifts= Weeks*Shifts_per_day*7;
+
+var Duration_of_shift = new Array(Shifts_per_day);
+for(i=0; i<Shifts_per_day; i++)
+    Duration_of_shift[i]=3;
+
+var Weeks_name = new Array(Weeks);
+for(i=0; i<Weeks; i++)
+    Weeks_name[i]="week"+(i+1);
+
+var Staffs_of_shift = new Array(Total_shifts);
+for(i=0; i<Total_shifts; i++)
+    Staffs_of_shift[i]=3;
+</script>
 <script type="text/javascript">
 //vue.js 相关脚本
 		var Data = {
-			    weeks: 2,
-			    shifts_per_day: 4,
-				total_shifts: 28,
-                duration_of_shift: [3,3,3,3],
-                staffnum_of_shift: [3, 3, 3, 3],
-				weeks_name:["本部","北区"],
-				// privilege_nums: 2,
-                // privilege_name: ["中层经理", "员工"],
-				privilege_model: 1,       // 1: 平行，所有人权限相同  2: 递减，高级可以当低级班
-				staffs_of_shift: [ 2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3 ],
+			weeks:  Weeks,
+			shifts_per_day: Shifts_per_day,
+			total_shifts: Total_shifts,
+			duration_of_shift: Duration_of_shift,
+			weeks_name: Weeks_name,
+			privilege_model: 1,
+			staffs_of_shift: Staffs_of_shift,
             }
 
-		 var Watch= {
-			   shifts_per_day: function(val){
-					this.shifts_per_day = val;
-					this.duration_of_shift = new Array(val);
-					for (i = 0; i < val; i++)
-						this.duration_of_shift[i] = 3;
-					//同时会引起staffs表格的变化
-					// this.staffs_of_shift = new Array(this.arrange_shifts, this.privilege_nums);
-					this.total_shifts =this.weeks * 7 * this.shifts_per_day;
-					this.staffs_of_shift.length= this.total_shifts;
-					for(i=0; i< this.total_shifts; i++)
-					   this.staffs_of_shift[i]=3;      
-				},
-				weeks: function(val){
-					this.weeks = val;
-					//同时会引起staffs表格的变化
-					// this.staffs_of_shift = new Array(this.arrange_shifts, this.privilege_nums);
-					this.weeks_name = new Array(val);
-					this.total_shifts =this.weeks * 7 *this.shifts_per_day;
-					this.staffs_of_shift.length= this.total_shifts;
-					for(i=0; i< this.total_shifts; i++)
-					   this.staffs_of_shift[i]=3;      
-				},
-           }
+		var Watch= {
+			"weeks": function(val){
+				this.weeks = val;
+                this.update_custom(val, this.shifts_per_day);
+				location.reload();	      
+			},
+			"shifts_per_day": function(val){
+				this.shifts_per_day = val;
+				this.update_custom(this.weeks, val);
+				location.reload();
+            }
+		}
 		var Mounted = function(){
-			//将数据库里的信息加载到此
-			//onload
-			//从数据库里加载属性，并显示
-				// alert("test!!!");
 			}
-
-		var Methods = {  
+		var Methods = {
+			update_custom:function(var1, var2){
+			$.ajax({
+				url:"operation/up_custom.php",
+				type:"post",
+				// dataType:'json',
+				data:{"weeks":var1, "shifts_per_day":var2},
+				async: true,
+				success:function(data){
+					alert("修改成功");
+				},
+				error:function(e){
+					alert("加载失败");
+				}
+			});
+		},
 			update_config: function(){
+				data_all = { "weeks": this.weeks,
+							"shifts_per_day": this.shifts_per_day};
+
+                for(i=1; i<=this.shifts_per_day; i++)
+					data_all['time'+i] = this.duration_of_shift[i-1];
+
+				for(i=1; i<=this.total_shifts; i++)
+					data_all[i] = this.staffs_of_shift[i-1];
+				for(i=1; i<=this.weeks; i++)
+					data_all["week"+i] = this.weeks_name[i-1];
+			
 				$.ajax({
 					url:"operation/custom.php",
 					type:"post",
-					data:{  "weeks": this.weeks,
-							"shifts_per_day": this.shifts_per_day,
-							"total_shifts": this.total_shifts,
-							"duration_of_shift":this.duration_of_shift,
-							"staffnum_of_shift": this.staffnum_of_shift,
-							"weeks_name":this.weeks_name,
-							"staffs_of_shift": this.staffs_of_shift,
-							},
-					processData:false,
-					contentType:false,
+					data: data_all,
 					success:function(data){
 						console.log("over..");
 						alert("设置权限成功！");
@@ -160,5 +192,16 @@ echo "<script language=javascript>alert('请先登录！');location.href='/login
             methods: Methods,
 			watch: Watch,
         })
+
+	
+
+	// $("#ipp1").bind('input porpertychange',function(){
+	// 	update_custom(Data.weeks, Data.shifts_per_day);
+	// 	location.reload();
+	// 	});
+	// $("#ipp2").bind('input porpertychange',function(){
+	// 	update_custom(Data.weeks, Data.shifts_per_day);
+	// 	location.reload();
+	// 	});
 </script>
 </html>

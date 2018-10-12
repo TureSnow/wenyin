@@ -6,7 +6,7 @@
 					<li id="shift" ><a href="/shift.php" >选班</a></li>
 					<li id="arrange" >  <a href="/arrange.php">排班控制台</a></li>
 					<li id="arrange_configure" > <a href="/arrange_configure.php">定制排班</a></li>
-					<li id="manage" > <a href="/contacts.php">通讯录</a></li>
+					<li id="manage" > <a href="/manage.php">通讯录</a></li>
 					</ul>
 
 					<ul class="nav navbar-nav navbar-right">
