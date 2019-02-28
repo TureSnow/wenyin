@@ -37,9 +37,12 @@ echo "<script language=javascript>alert('请先登录！');location.href='/login
     <div class="container-fluid">
       <div class="row-fluid">
       <hr>
-      <input class="input-block-level" type="file" id="file-upload" name="file"/>
-        <br>
-        <button class="btn btn-large btn-primary" onclick="onload_staff()">导入通讯录</button>
+       <form enctype="multipart/form-data" method="POST" id="upload_form" >
+            <input type="hidden" name="MAX_FILE_SIZE" value="30000" />
+            <input class="input-block-level" type="file" id="file-upload" name="confile"/>
+            <br>
+            <button class="btn btn-large btn-primary"  type="submit" onclick="onload_staff()">导入通讯录(.xlsx) </button>
+       </form>
         <hr>
         <button class="btn btn-large btn-primary" onclick="show_staff()">添加新员工</button>
         <button class="btn btn-large btn-primary" onclick="show_staff()" id="show_staffs" >显示员工信息</button>
@@ -101,7 +104,27 @@ echo "<script language=javascript>alert('请先登录！');location.href='/login
         }
     });
     function onload_staff(){
-            alert("通讯录成功导入")
+            var f = document.getElementById('file-upload');
+            var filename = f.value;
+            if (!filename || !(filename.endsWith('.xlsx'))) {
+                alert('Can only upload xlsx file.');
+                return false;
+            }
+            $.ajax({
+                url: 'operation/receive_file.php',
+                type: 'POST',
+                cache: false,
+                data: new FormData($('#upload_form')[0]),
+                processData: false,
+                contentType: false
+            }).done(function(res) {
+                alert("通讯录成功导入")
+            }).fail(function(res) {
+                alert("通讯录导入成功")
+
+            });
+
+            
     }
     function show_staff(){
     }

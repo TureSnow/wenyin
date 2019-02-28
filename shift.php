@@ -186,14 +186,32 @@ $allow_shift = $data[0];
 		   if(this.self_selects[shift_id]=='1')
                flag=0;
 
-		//    var block = '#'+shift_id;
-        //    if(flag) //id颜色变亮
-		// 	 $(block).css("background-color","yellow");
-		//    else //id颜色变暗
-		//      $(block).css("background-color","green");
-
+            //以下几行检测代码只针对文印
 		    //flag =1, 插入
-             
+            function conflict(self_selects, shift_id){
+            	// alert(shift_id)
+            	// alert(self_selects[shift_id])
+            	var composite_week = ((parseInt((shift_id-1)/28))%2 == 1)
+
+            	if(composite_week && self_selects[shift_id-28]=='1')
+                  	    return true;
+            	if(!composite_week &&self_selects[shift_id+28]=='1')
+                  	     return true;
+				return false;
+            }
+
+		    if(conflict(this.self_selects,shift_id)){
+				if(flag==1){
+					alert("时间冲突！");
+					return;
+				}
+			}
+   //          if(this.self_selects[shift_id-28]=='1'||this.self_selects[shift_id+28]=='1'){
+			// 	if(flag==1){
+			// 		alert("时间冲突！");
+			// 		return;
+			// 	}
+			// }
 		   	$.ajax({
 				url:"operation/click_select.php",
 				type:"post",

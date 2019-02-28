@@ -91,6 +91,7 @@ void read_shift_info(string file){
     shift_mask= a2;
     shift_thes = a2;
 }
+
 //包括构建二分图
 void read_txt(string file){
     ifstream fin(file.c_str());
@@ -114,7 +115,6 @@ void read_txt(string file){
     staff_nums = idx;
     fin.close();
 }
-
 
 
 int * staffHaveTime = (int *)malloc(sizeof(int)*staff_nums);
